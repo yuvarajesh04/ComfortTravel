@@ -1,12 +1,23 @@
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar: React.FC = () => {
+  const localUser = localStorage.getItem("user");
+  const user = localUser ? JSON.parse(localUser) : null;
+  const navigate = useNavigate();
+
   return (
-    <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'var(--primary-color)' }}>
+    <nav
+      className="navbar navbar-expand-lg navbar-dark"
+      style={{ backgroundColor: "var(--primary-color)" }}
+    >
       <div className="container-fluid">
-        <a className="navbar-brand text-white fw-semibold" href="/home">
+        {/* Brand */}
+        <Link className="navbar-brand fw-semibold text-white" to="/home">
           Comfort Travels
-        </a>
+        </Link>
+
+        {/* Toggler (mobile menu button) */}
         <button
           className="navbar-toggler"
           type="button"
@@ -19,29 +30,50 @@ const Navbar: React.FC = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
+        {/* Collapsible Nav Items */}
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <a className="nav-link active text-white" aria-current="page" href="#">
+              <Link className="nav-link active text-white" to="/admin/home">
                 Home
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link text-white" href="#">
-                Features
-              </a>
+              <Link className="nav-link text-white" to="/admin/trips">
+                Trips
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link text-white" href="#">
+              <Link className="nav-link text-white" to="/pricing">
                 Pricing
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link text-white" aria-disabled="true">
-                Disabled
-              </a>
+              <Link className="nav-link text-white" to="/admin/assign-trip">
+                AssignTrip
+              </Link>
             </li>
           </ul>
+
+          {/* User Info */}
+          {user?.name && (
+            <div
+              onClick={()=> navigate('/admin/profile')}
+              className="d-flex align-items-center bg-white rounded px-2 py-1"
+              title="Profile"
+              style={{
+                boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px",
+                color: "var(--primary-color)",
+                cursor: 'pointer'
+              }}
+            >
+              <i
+                className="bi bi-person fw-semibold me-2"
+                style={{ color: "var(--primary-color)" }}
+              ></i>
+              <span className="fw-semibold">{user.name}!</span>
+            </div>
+          )}
         </div>
       </div>
     </nav>

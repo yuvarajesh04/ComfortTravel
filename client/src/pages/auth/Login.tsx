@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import "../../styles/login.css";
+import { useAuth } from "../../context/Authcontext";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormInputs {
   email: string;
@@ -8,16 +10,50 @@ interface LoginFormInputs {
 }
 
 const Login: React.FC = () => {
+  const navigate = useNavigate()
+  const { login, user } = useAuth()
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
+  React.useEffect(() => {
+    if (user?.userType === 'admin')
+      navigate('/admin/home')
+    else if (user?.userType === "user")
+      navigate('/user/home')
+  }, [user])
+
   const [showPassword, setShowPassword] = useState(false);
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    console.log("Login Data:", data);
+  const [loading, setLoading] = React.useState(false);
+
+  const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+
+    setLoading(true)
+
+    try {
+      const response = await login(data.email, data.password);
+
+      if (response?.success) {
+        reset();
+
+        setLoading(false);
+
+        if (response?.user?.userType === 'admin')
+          navigate('/admin/home')
+
+        else if (response?.user?.userType === "user")
+          navigate('/user/home')
+      }
+    } catch (error) {
+
+      setLoading(false)
+
+      console.error('login error', error)
+    }
   };
 
   return (
@@ -89,8 +125,9 @@ const Login: React.FC = () => {
           type="submit"
           className="btn w-100"
           style={{ backgroundColor: "var(--primary-color)", color: "white" }}
+          disabled={loading}
         >
-          Login
+          {loading ? 'Please wait!' : 'Login'}
         </button>
 
         <p

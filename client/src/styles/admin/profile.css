@@ -1,0 +1,12 @@
+.save-form {
+    border: 2px solid var(--primary-color);
+    letter-spacing: 2px;
+    font-weight: bold;
+    transition: 0.8s ease all;
+}
+
+.save-form:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
